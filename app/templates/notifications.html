@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Earth Climate Agency | Notifications</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Orbitron:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      .card-img-top {
+        height: 200px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+      .data-card {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <span>Earth Climate Agency</span>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('main.index') }}">Home</a></li>
+          <li><a href="{{ url_for('main.visualization') }}">Analytics</a></li>
+          <li><a href="{{ url_for('main.predict') }}">Predictions</a></li>
+          <li>
+            <a
+              href=" {{ url_for('notifications.view_notifications') }}"
+              class="active"
+              >Notifications</a
+            >
+          </li>
+          <li>
+            <a href="{{ url_for('main.reports') }}">Reports</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="auth-buttons">
+        {% if session.get('username') %}
+        <a href="#" class="btn-signin disabled"
+          >Welcome, {{ session['username'] }}</a
+        >
+        <a href="{{ url_for('auth.logout') }}" class="btn-signup">Logout</a>
+        {% else %}
+        <a href="" class="btn-signin">Sign In</a>
+        <a href="{{ url_for('auth.signup') }}" class="btn-signup">Sign Up</a>
+        {% endif %}
+        <a href="{{ url_for('feedback.submit_feedback') }}" class="btn-signin"
+          >Feedback</a
+        >
+      </div>
+    </header>
+
+    <main class="pt-5">
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=True) %} {% if
+      messages %}
+      <div class="container mt-3">
+        {% for category, message in messages %}
+        <div
+          class="alert alert-{{ category }} alert-dismissible fade show"
+          role="alert"
+        >
+          {{ message }}
+          <button
+            type="button"
+            class="close"
+            data-dismiss="alert"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+      <section class="hero-sectiondata">
+        <div class="hero-contentdata">
+          <h1>Global Climate News</h1>
+          <p class="subtitle">
+            Access real-time climate metrics and historical records from our
+            global monitoring network
+          </p>
+        </div>
+      </section>
+
+      <!-- Data Visualization Section -->
+      <section class="section-container">
+        <div class="data-visualizations">
+          {% if news_data %}
+          <div class="row g-4">
+            {% for news in news_data %}
+            <div class="col-md-4 mb-4" data-aos-delay="{{ loop.index * 100 }}">
+              <div class="data-card mt-3">
+                <center>
+                  <img
+                    class="card-img-top"
+                    src="{{ news.urlToImage or 'default_image_url.jpg' }}"
+                    alt="News Image"
+                  />
+                </center>
+                <div class="data-content">
+                  <h3>{{ news.title }}</h3>
+                </div>
+                <div class="data-stats">
+                  <div class="stat">
+                    <span class="label">{{ news.description }}</span>
+                  </div>
+                </div>
+                <br />
+                <div class="section-footer">
+                  <a href="{{ news.url }}" class="cta-button outline"
+                    >Read more <i class="fas fa-arrow-right"></i
+                  ></a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="text-center">No climate news available at the moment.</p>
+          {% endif %}
+        </div>
+      </section>
+
+      <section class="newsletter-section">
+        <div class="section-container">
+          <div class="newsletter-content">
+            <h2>Stay Informed</h2>
+            <p>
+              Subscribe to our monthly climate report and stay updated on our
+              latest findings and initiatives
+            </p>
+
+            <form class="newsletter-form">
+              <div class="form-group">
+                <input
+                  type="email"
+                  placeholder="Enter your email address"
+                  required
+                />
+                <button type="submit" class="cta-button">
+                  Subscribe <i class="fas fa-paper-plane"></i>
+                </button>
+              </div>
+              <div class="form-note">
+                <i class="fas fa-lock"></i> We respect your privacy. Unsubscribe
+                at any time.
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+      <footer>
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>About ECA</h3>
+            <p>
+              Monitoring Earth's climate systems since 1985 to provide accurate
+              data and drive meaningful action.
+            </p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="{{ url_for('main.index') }}">Home</a></li>
+              <li><a href="{{ url_for('auth.signup') }}">Register</a></li>
+              <li>
+                <a href="{{ url_for('feedback.submit_feedback') }}">Feedback</a>
+              </li>
+              <li><a href="{{ url_for('auth.signin') }}">Signin</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Contact</h3>
+            <p>info@climateagency.org<br />+92 321-45632456</p>
+            <div class="social-icons">
+              <a href="#"
+                ><img
+                  src="{{ url_for('static', filename='images/twitter.png')}}"
+                  alt="Twitter"
+              /></a>
+              <a href="#"
+                ><img
+                  src="{{ url_for('static', filename='images/facebook.jpg')}}"
+                  alt="Facebook"
+              /></a>
+              <a href="#"
+                ><img
+                  src="{{ url_for('static', filename='images/linkedin.jpg')}}"
+                  alt="LinkedIn"
+              /></a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2023 Earth Climate Agency. All rights reserved.</p>
+        </div>
+      </footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/earth.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/main.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/glitter.js')}}"></script>
+    <script src="js/charts.js"></script>
+    <script>
+      AOS.init({
+        duration: 800,
+        easing: "ease-in-out",
+        once: true,
+      });
+    </script>
+  </body>
+</html>

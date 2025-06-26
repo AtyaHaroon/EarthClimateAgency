@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Earth Climate Agency | Predict</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Orbitron:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <head>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      />
+    </head>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <!-- <img src="images/logo.png" alt="ECA Logo" /> -->
+        <span>Earth Climate Agency</span>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('main.index') }}">Home</a></li>
+          <li><a href="{{ url_for('main.visualization') }}">Analytics</a></li>
+          <li>
+            <a href="{{ url_for('main.predict') }}" class="active"
+              >Predictions</a
+            >
+          </li>
+          <li>
+            <a href=" {{ url_for('notifications.view_notifications') }}"
+              >Notifications</a
+            >
+          </li>
+          <li>
+            <a href="{{ url_for('main.reports') }}">Reports</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="auth-buttons">
+        {% if session.get('username') %}
+        <a href="#" class="btn-signin disabled"
+          >Welcome, {{ session['username'] }}</a
+        >
+        <a href="{{ url_for('auth.logout') }}" class="btn-signup">Logout</a>
+        {% else %}
+        <a href="" class="btn-signin">Sign In</a>
+        <a href="{{ url_for('auth.signup') }}" class="btn-signup">Sign Up</a>
+        {% endif %}
+        <a href="{{ url_for('feedback.submit_feedback') }}" class="btn-signin"
+          >Feedback</a
+        >
+      </div>
+    </header>
+
+    <main>
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=True) %} {% if
+      messages %}
+      <div class="container mt-3">
+        {% for category, message in messages %}
+        <div
+          class="alert alert-{{ category }} alert-dismissible fade show"
+          role="alert"
+        >
+          {{ message }}
+          <button
+            type="button"
+            class="close"
+            data-dismiss="alert"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+      <section class="hero-sectiondata">
+        <!-- <div id="earth-container"></div> -->
+        <div>
+          <div>
+            <div class="hero-contentdata">
+              <h1>Global Climate Data</h1>
+              <p class="subtitle">
+                Access real-time climate metrics and historical records from our
+                global monitoring network
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="data-explorer">
+        <div class="section-container">
+          <div class="climate">
+            <span>Select a Location for Climate Prediction</span>
+          </div>
+          <form method="POST">
+            <div class="data-filters">
+              <div class="filter-group">
+                <label for="country">Country</label>
+                <select
+                  id="country"
+                  name="country"
+                  class="custom-select"
+                  required
+                >
+                  <option disabled selected>Select a country</option>
+                  {% for country in countries %}
+                  <option value="{{ country }}">{{ country }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label for="city">City</label>
+                <select class="custom-select" id="city" name="city" required>
+                  <option disabled selected>Select a city</option>
+                </select>
+              </div>
+              <div class="mt-5">
+                <button type="submit" class="cta-button outline">
+                  Get Prediction <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <div class="data-visualization">
+            <div class="data-graph-container">
+              {% if prediction %}
+              <div class="">{{ prediction }}</div>
+              {% endif %}
+            </div>
+            <div class="data-table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Year</th>
+                    <th>Value</th>
+                    <th>Anomaly</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% if prediction %}
+                  <tr>
+                    <td>Current</td>
+                    <td>
+                      {{ prediction.split(':')[1].split('°C')[0].strip() }}
+                    </td>
+                    <td>
+                      {% if "increase" in prediction %}
+                      <span style="color: #ff6b6b">↑ High</span>
+                      {% elif "stable" in prediction %}
+                      <span style="color: #feca57">→ Normal</span>
+                      {% else %}
+                      <span style="color: #1dd1a1">↓ Low</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>2024</td>
+                    <td>
+                      {{ (prediction.split(':')[1].split('°C')[0].strip()|float
+                      + 0.5)|round(2) }}
+                    </td>
+                    <td><span style="color: #ff6b6b">↑ +0.5°C</span></td>
+                  </tr>
+                  <tr>
+                    <td>2025</td>
+                    <td>
+                      {{ (prediction.split(':')[1].split('°C')[0].strip()|float
+                      + 0.8)|round(2) }}
+                    </td>
+                    <td><span style="color: #ff6b6b">↑ +0.8°C</span></td>
+                  </tr>
+                  {% else %}
+                  <tr>
+                    <td colspan="3" style="text-align: center">
+                      Select a location to see predictions
+                    </td>
+                  </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="data-download">
+            <h3>Download Data</h3>
+            <div class="download-options">
+              <button class="download-btn" onclick="downloadData('csv')">
+                <i class="fas fa-file-csv"></i> CSV
+              </button>
+              <button class="download-btn" onclick="downloadData('excel')">
+                <i class="fas fa-file-excel"></i> Excel
+              </button>
+              <button class="download-btn" onclick="downloadData('pdf')">
+                <i class="fas fa-file-pdf"></i> PDF Report
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="data-section">
+        <div class="section-container">
+          <h2>Data Sources</h2>
+          <div class="sources-grid">
+            <div class="source-card">
+              <div class="source-icon"><i class="fas fa-satellite"></i></div>
+              <h3>Satellite Observations</h3>
+              <p>
+                Data collected from our network of climate monitoring satellites
+              </p>
+            </div>
+            <div class="source-card">
+              <div class="source-icon"><i class="fas fa-water"></i></div>
+              <h3>Ocean Buoys</h3>
+              <p>Global network of automated ocean monitoring stations</p>
+            </div>
+            <div class="source-card">
+              <div class="source-icon"><i class="fas fa-mountain"></i></div>
+              <h3>Weather Stations</h3>
+              <p>Ground-based weather stations across 187 countries</p>
+            </div>
+            <div class="source-card">
+              <div class="source-icon"><i class="fas fa-flask"></i></div>
+              <h3>Ice Core Samples</h3>
+              <p>Historical climate data from polar ice core analysis</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Newsletter Section -->
+      <section class="newsletter-section">
+        <div class="section-container">
+          <div class="newsletter-content">
+            <h2>Stay Informed</h2>
+            <p>
+              Subscribe to our monthly climate report and stay updated on our
+              latest findings and initiatives
+            </p>
+
+            <form class="newsletter-form">
+              <div class="form-group">
+                <input
+                  type="email"
+                  placeholder="Enter your email address"
+                  required
+                />
+                <button type="submit" class="cta-button">
+                  Subscribe <i class="fas fa-paper-plane"></i>
+                </button>
+              </div>
+              <div class="form-note">
+                <i class="fas fa-lock"></i> We respect your privacy. Unsubscribe
+                at any time.
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+      <footer>
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>About ECA</h3>
+            <p>
+              Monitoring Earth's climate systems since 1985 to provide accurate
+              data and drive meaningful action.
+            </p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="{{ url_for('main.index') }}">Home</a></li>
+              <li><a href="{{ url_for('auth.signup') }}">Register</a></li>
+              <li>
+                <a href="{{ url_for('feedback.submit_feedback') }}">Feedback</a>
+              </li>
+              <li><a href="{{ url_for('auth.signin') }}">Signin</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Contact</h3>
+            <p>info@climateagency.org<br />+92 321-45632456</p>
+            <div class="social-icons">
+              <a href="#"
+                ><img
+                  src="{{ url_for('static', filename='images/twitter.png')}}"
+                  alt="Twitter"
+              /></a>
+              <a href="#"
+                ><img
+                  src="{{ url_for('static', filename='images/facebook.jpg')}}"
+                  alt="Facebook"
+              /></a>
+              <a href="#"
+                ><img
+                  src="{{ url_for('static', filename='images/linkedin.jpg')}}"
+                  alt="LinkedIn"
+              /></a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2023 Earth Climate Agency. All rights reserved.</p>
+        </div>
+      </footer>
+    </main>
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/earth.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/main.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/glitter.js')}}"></script>
+    <script src="js/charts.js"></script>
+    <script>
+      const countries = {
+        USA: ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"],
+        UK: ["London", "Manchester", "Birmingham", "Liverpool", "Glasgow"],
+        India: ["Delhi", "Mumbai", "Bangalore", "Chennai", "Hyderabad"],
+        Canada: ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa"],
+        Australia: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"],
+        Germany: ["Berlin", "Munich", "Frankfurt", "Hamburg", "Cologne"],
+        France: ["Paris", "Marseille", "Lyon", "Toulouse", "Nice"],
+        China: ["Beijing", "Shanghai", "Shenzhen", "Guangzhou", "Chengdu"],
+        Japan: ["Tokyo", "Osaka", "Yokohama", "Nagoya", "Fukuoka"],
+        Brazil: [
+          "São Paulo",
+          "Rio de Janeiro",
+          "Brasília",
+          "Salvador",
+          "Fortaleza",
+        ],
+        Russia: [
+          "Moscow",
+          "Saint Petersburg",
+          "Novosibirsk",
+          "Yekaterinburg",
+          "Kazan",
+        ],
+        "South Africa": [
+          "Johannesburg",
+          "Cape Town",
+          "Durban",
+          "Pretoria",
+          "Port Elizabeth",
+        ],
+        Mexico: [
+          "Mexico City",
+          "Guadalajara",
+          "Monterrey",
+          "Puebla",
+          "Tijuana",
+        ],
+        Italy: ["Rome", "Milan", "Naples", "Turin", "Palermo"],
+        Spain: ["Madrid", "Barcelona", "Valencia", "Seville", "Zaragoza"],
+        Netherlands: [
+          "Amsterdam",
+          "Rotterdam",
+          "The Hague",
+          "Utrecht",
+          "Eindhoven",
+        ],
+        Argentina: [
+          "Buenos Aires",
+          "Córdoba",
+          "Rosario",
+          "Mendoza",
+          "La Plata",
+        ],
+        Pakistan: ["Karachi", "Lahore", "Islamabad", "Quetta", "Multan"],
+        "Saudi Arabia": ["Riyadh", "Jeddah", "Mecca", "Medina", "Dammam"],
+        Turkey: ["Istanbul", "Ankara", "Izmir", "Bursa", "Antalya"],
+        Nigeria: ["Lagos", "Abuja", "Kano", "Ibadan", "Port Harcourt"],
+        "South Korea": ["Seoul", "Busan", "Incheon", "Daegu", "Daejeon"],
+        Indonesia: ["Jakarta", "Surabaya", "Bandung", "Medan", "Bekasi"],
+        Egypt: ["Cairo", "Alexandria", "Giza", "Shubra El Kheima", "Port Said"],
+        Philippines: [
+          "Manila",
+          "Quezon City",
+          "Davao City",
+          "Caloocan",
+          "Cebu City",
+        ],
+      };
+
+      $("#country").on("change", function () {
+        const selectedCountry = $(this).val();
+        const citySelect = $("#city");
+        citySelect.empty();
+        citySelect.append("<option disabled selected>Select a city</option>");
+        if (countries[selectedCountry]) {
+          countries[selectedCountry].forEach(function (city) {
+            citySelect.append(`<option value="${city}">${city}</option>`);
+          });
+        }
+      });
+    </script>
+    <script>
+      function downloadData(format) {
+        // Get the current prediction data
+        const prediction = "{{ prediction }}";
+        const country = "{{ selected_country }}";
+        const city = "{{ selected_city }}";
+
+        if (!prediction) {
+          alert("Please get a prediction first before downloading.");
+          return;
+        }
+        if (!country || !city) {
+          alert(
+            "Please select a location and get a prediction before downloading."
+          );
+          return;
+        }
+        // Encode the country and city for URL
+        const encodedCountry = encodeURIComponent(country);
+        const encodedCity = encodeURIComponent(city);
+        // Redirect to the download endpoint
+        window.location.href = `/download/${format}/${encodedCountry}/${encodedCity}`;
+        // Extract temperature value
+        const tempMatch = prediction.match(
+          /Current temperature for .*?: ([\d.]+)/
+        );
+        const currentTemp = tempMatch ? tempMatch[1] : "N/A";
+
+        // Create data object
+        const data = {
+          location: `${city}, ${country}`,
+          currentTemperature: currentTemp,
+          prediction: prediction.includes("increase")
+            ? "Temperature expected to increase"
+            : "Temperature expected to remain stable",
+          forecast: [
+            {
+              year: "Current",
+              temperature: currentTemp,
+              anomaly: prediction.includes("increase")
+                ? "High"
+                : prediction.includes("stable")
+                ? "Normal"
+                : "Low",
+            },
+            {
+              year: "2024",
+              temperature: (parseFloat(currentTemp) + 0.5).toFixed(2),
+              anomaly: "+0.5°C",
+            },
+            {
+              year: "2025",
+              temperature: (parseFloat(currentTemp) + 0.8).toFixed(2),
+              anomaly: "+0.8°C",
+            },
+          ],
+        };
+
+        if (format === "csv") {
+          downloadCSV(data);
+        } else if (format === "excel") {
+          downloadExcel(data);
+        } else if (format === "pdf") {
+          downloadPDF(data);
+        }
+      }
+
+      function downloadCSV(data) {
+        let csvContent = "data:text/csv;charset=utf-8,";
+
+        // Add header
+        csvContent += "Location,Current Temperature,Prediction\n";
+        csvContent += `"${data.location}",${data.currentTemperature},"${data.prediction}"\n\n`;
+
+        // Add forecast data
+        csvContent += "Year,Temperature,Anomaly\n";
+        data.forecast.forEach((row) => {
+          csvContent += `${row.year},${row.temperature},${row.anomaly}\n`;
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute(
+          "download",
+          `climate_data_${data.location.replace(", ", "_")}.csv`
+        );
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      function downloadExcel(data) {
+        // For Excel, we'll create a CSV but with .xls extension
+        // In a real app, you'd use a library like SheetJS
+        let excelContent = "data:text/csv;charset=utf-8,";
+
+        // Add header
+        excelContent += "Location,Current Temperature,Prediction\n";
+        excelContent += `"${data.location}",${data.currentTemperature},"${data.prediction}"\n\n`;
+
+        // Add forecast data
+        excelContent += "Year,Temperature,Anomaly\n";
+        data.forecast.forEach((row) => {
+          excelContent += `${row.year},${row.temperature},${row.anomaly}\n`;
+        });
+
+        const encodedUri = encodeURI(excelContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute(
+          "download",
+          `climate_data_${data.location.replace(", ", "_")}.xls`
+        );
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    </script>
+  </body>
+</html>

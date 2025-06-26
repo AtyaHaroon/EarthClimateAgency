@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Earth Climate Agency | Home</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Orbitron:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="loader">
+      <div class="loader-spinner"></div>
+    </div>
+    <header>
+      <div class="logo">
+        <!-- <img src="images/logo.png" alt="ECA Logo" /> -->
+        <span>Earth Climate Agency</span>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="index.html" class="active">Home</a></li>
+          <li><a href="climatedata.html">Climate Data</a></li>
+          <li><a href="research.html">Research</a></li>
+          <li><a href="#">Initiatives</a></li>
+          <li><a href="#">About</a></li>
+        </ul>
+      </nav>
+      <div class="auth-buttons">
+        <a href="signin.html" class="btn-signin">Sign In</a>
+        <a href="signup.html" class="btn-signup">Sign Up</a>
+      </div>
+    </header>
+
+    <main>
+      <!-- Newsletter Section -->
+      <section class="newsletter-section">
+        <div class="section-container">
+          <div class="newsletter-content">
+            <h2>Stay Informed</h2>
+            <p>
+              Subscribe to our monthly climate report and stay updated on our
+              latest findings and initiatives
+            </p>
+
+            <form class="newsletter-form">
+              <div class="form-group">
+                <input
+                  type="email"
+                  placeholder="Enter your email address"
+                  required
+                />
+                <button type="submit" class="cta-button">
+                  Subscribe <i class="fas fa-paper-plane"></i>
+                </button>
+              </div>
+              <div class="form-note">
+                <i class="fas fa-lock"></i> We respect your privacy. Unsubscribe
+                at any time.
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>About ECA</h3>
+            <p>
+              Monitoring Earth's climate systems since 1985 to provide accurate
+              data and drive meaningful action.
+            </p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="#">Data Portal</a></li>
+              <li><a href="#">Research Papers</a></li>
+              <li><a href="#">Climate Action</a></li>
+              <li><a href="#">Careers</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Contact</h3>
+            <p>info@climateagency.org<br />+1 (555) 123-4567</p>
+            <div class="social-icons">
+              <a href="#"><img src="images/twitter.png" alt="Twitter" /></a>
+              <a href="#"><img src="images/facebook.jpg" alt="Facebook" /></a>
+              <a href="#"><img src="images/linkedin.jpg" alt="LinkedIn" /></a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2023 Earth Climate Agency. All rights reserved.</p>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Add Chart.js for data visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/earth.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/main.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/glitter.js')}}"></script>
+    <script src="js/charts.js"></script>
+  </body>
+</html>

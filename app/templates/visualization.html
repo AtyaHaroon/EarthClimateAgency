@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Earth Climate Agency | Visualization</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Orbitron:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <span>Earth Climate Agency</span>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('main.index') }}">Home</a></li>
+          <li>
+            <a href="{{ url_for('main.visualization') }}" class="active"
+              >Analytics</a
+            >
+          </li>
+          <li><a href="{{ url_for('main.predict') }}">Predictions</a></li>
+          <li>
+            <a href=" {{ url_for('notifications.view_notifications') }}"
+              >Notifications</a
+            >
+          </li>
+          <li>
+            <a href="{{ url_for('main.reports') }}">Reports</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="auth-buttons">
+        {% if session.get('username') %}
+        <a href="#" class="btn-signin disabled"
+          >Welcome, {{ session['username'] }}</a
+        >
+        <a href="{{ url_for('auth.logout') }}" class="btn-signup">Logout</a>
+        {% else %}
+        <a href="" class="btn-signin">Sign In</a>
+        <a href="{{ url_for('auth.signup') }}" class="btn-signup">Sign Up</a>
+        {% endif %}
+        <a href="{{ url_for('feedback.submit_feedback') }}" class="btn-signin"
+          >Feedback</a
+        >
+      </div>
+    </header>
+
+    <main>
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=True) %} {% if
+      messages %}
+      <div class="container mt-3">
+        {% for category, message in messages %}
+        <div
+          class="alert alert-{{ category }} alert-dismissible fade show"
+          role="alert"
+        >
+          {{ message }}
+          <button
+            type="button"
+            class="close"
+            data-dismiss="alert"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+      <section class="hero-sectiondata">
+        <div>
+          <div class="hero-contentdata">
+            <h1>Choose Your Visualization</h1>
+            <p class="subtitle">
+              Select a variable and explore the data to gain insights about
+              climate changes.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="data-explorer">
+        <div class="section-container">
+          <!-- Single Variable Visualization -->
+          <form
+            method="POST"
+            action="{{ url_for('main.visualization_results') }}"
+          >
+            <div class="visualization-card">
+              <h2>
+                <i class="fas fa-chart-line"></i> Select a Variable to Visualize
+              </h2>
+              <div class="form-group">
+                <select
+                  class="data-select"
+                  id="variable"
+                  name="variable"
+                  required
+                >
+                  <option value="">--Select a Variable to Visualize --</option>
+                  <option value="temperature">Temperature</option>
+                  <option value="humidity">Humidity</option>
+                  <option value="co2">CO2 Levels</option>
+                </select>
+                <center>
+                  <button class="cta-button">
+                    Visualize <i class="fas fa-arrow-right"></i>
+                  </button>
+                </center>
+              </div>
+            </div>
+          </form>
+          <!-- Correlation Matrix Option -->
+          <div class="visualization-card alt">
+            <h2>
+              <i class="fas fa-project-diagram"></i> Or View Correlation Matrix
+            </h2>
+            <center>
+              <form
+                method="POST"
+                action="{{ url_for('main.correlation_matrix') }}"
+              >
+                <button class="cta-button outline">
+                  Show Correlation Matrix <i class="fas fa-table"></i>
+                </button>
+              </form>
+            </center>
+          </div>
+
+          <!-- Multi-Variable Comparison -->
+          <!-- Multi-Variable Comparison -->
+          <div class="visualization-card">
+            <h2>
+              <i class="fas fa-layer-group"></i> Compare Multiple Variables
+            </h2>
+            <form id="multiVarForm" method="POST">
+              <p>Select Up to Three Variables</p>
+              <div class="multi-select">
+                <div class="checkbox-group">
+                  <input
+                    type="checkbox"
+                    id="temp"
+                    name="variables"
+                    value="temperature"
+                  />
+                  <label for="temp">Temperature</label>
+                </div>
+                <div class="checkbox-group">
+                  <input
+                    type="checkbox"
+                    id="humidity"
+                    name="variables"
+                    value="humidity"
+                  />
+                  <label for="humidity">Humidity</label>
+                </div>
+                <div class="checkbox-group">
+                  <input
+                    type="checkbox"
+                    id="co2"
+                    name="variables"
+                    value="co2_levels"
+                  />
+                  <label for="co2">CO2 Levels</label>
+                </div>
+              </div>
+              <center>
+                <button type="submit" class="cta-button">
+                  Compare Variables <i class="fas fa-exchange-alt"></i>
+                </button>
+              </center>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- Visualization Canvas -->
+      <section class="visualization-output">
+        <div class="section-container">
+          <div class="graph-container">
+            <canvas id="climateChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="newsletter-section">
+        <div class="section-container">
+          <div class="newsletter-content">
+            <h2>Stay Informed</h2>
+            <p>
+              Subscribe to our monthly climate report and stay updated on our
+              latest findings and initiatives
+            </p>
+
+            <form class="newsletter-form">
+              <div class="form-group">
+                <input
+                  type="email"
+                  placeholder="Enter your email address"
+                  required
+                />
+                <button type="submit" class="cta-button">
+                  Subscribe <i class="fas fa-paper-plane"></i>
+                </button>
+              </div>
+              <div class="form-note">
+                <i class="fas fa-lock"></i> We respect your privacy. Unsubscribe
+                at any time.
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>About ECA</h3>
+            <p>
+              Monitoring Earth's climate systems since 1985 to provide accurate
+              data and drive meaningful action.
+            </p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="{{ url_for('main.index') }}">Home</a></li>
+              <li><a href="{{ url_for('auth.signup') }}">Signup</a></li>
+              <li>
+                <a href="{{ url_for('feedback.submit_feedback') }}">Feedback</a>
+              </li>
+              <li><a href="{{ url_for('auth.signin') }}">Signin</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Contact</h3>
+            <p>info@climateagency.org<br />+92 321-45632456</p>
+            <div class="social-icons">
+              <a href="#"
+                ><img
+                  src="{{ url_for('static', filename='images/twitter.png')}}"
+                  alt="Twitter"
+              /></a>
+              <a href="#"
+                ><img
+                  src="{{ url_for('static', filename='images/facebook.jpg')}}"
+                  alt="Facebook"
+              /></a>
+              <a href="#"
+                ><img
+                  src="{{ url_for('static', filename='images/linkedin.jpg')}}"
+                  alt="LinkedIn"
+              /></a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2023 Earth Climate Agency. All rights reserved.</p>
+        </div>
+      </footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/earth.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/main.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/glitter.js')}}"></script>
+    <script src="js/charts.js"></script>
+    <script>
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+        $("form").on("submit", function () {
+          $("#loading-spinner").show();
+        });
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize chart variable
+        let multiVarChart = null;
+        const ctx = document.getElementById("climateChart").getContext("2d");
+
+        // Handle multi-variable comparison form submission
+        const multiVarForm = document.getElementById("multiVarForm");
+
+        multiVarForm.addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const formData = new FormData(this);
+          const graphContainer = document.querySelector(".graph-container");
+
+          // Show loading state
+          graphContainer.innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Generating comparison chart...
+                </div>
+            `;
+
+          try {
+            const response = await fetch(
+              "{{ url_for('main.multi_variable_comparison') }}",
+              {
+                method: "POST",
+                body: formData,
+                headers: {
+                  Accept: "application/json",
+                },
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data.error) {
+              throw new Error(data.error);
+            }
+
+            // Create or update canvas
+            let canvas = document.getElementById("climateChart");
+            if (!canvas) {
+              canvas = document.createElement("canvas");
+              canvas.id = "climateChart";
+              graphContainer.innerHTML = "";
+              graphContainer.appendChild(canvas);
+              ctx = canvas.getContext("2d");
+            }
+
+            // Destroy previous chart if exists
+            if (multiVarChart) {
+              multiVarChart.destroy();
+            }
+
+            // Create new chart
+            multiVarChart = new Chart(ctx, {
+              type: "line",
+              data: {
+                labels: data.labels,
+                datasets: data.datasets,
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  x: {
+                    title: {
+                      display: true,
+                      text: "Date",
+                      color: "#fff",
+                    },
+                    ticks: {
+                      color: "#fff",
+                      maxRotation: 45,
+                      minRotation: 45,
+                    },
+                    grid: {
+                      color: "rgba(255, 255, 255, 0.1)",
+                    },
+                  },
+                  y: {
+                    title: {
+                      display: true,
+                      text: "Value",
+                      color: "#fff",
+                    },
+                    ticks: {
+                      color: "#fff",
+                    },
+                    grid: {
+                      color: "rgba(255, 255, 255, 0.1)",
+                    },
+                  },
+                },
+                plugins: {
+                  legend: {
+                    position: "top",
+                    labels: {
+                      color: "#fff",
+                      font: {
+                        size: 14,
+                      },
+                    },
+                  },
+                  tooltip: {
+                    mode: "index",
+                    intersect: false,
+                  },
+                },
+                interaction: {
+                  mode: "nearest",
+                  axis: "x",
+                  intersect: false,
+                },
+              },
+            });
+          } catch (error) {
+            console.error("Error:", error);
+            graphContainer.innerHTML = `
+                    <div class="error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        ${error.message || "Failed to load comparison data"}
+                    </div>
+                `;
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

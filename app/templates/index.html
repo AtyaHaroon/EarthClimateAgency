@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Earth Climate Agency | Home</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Orbitron:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <!-- <img src="images/logo.png" alt="ECA Logo" /> -->
+        <span>Earth Climate Agency</span>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('main.index') }}" class="active">Home</a></li>
+          <li><a href="{{ url_for('main.visualization') }}">Analytics</a></li>
+          <li><a href="{{ url_for('main.predict') }}">Predictions</a></li>
+          <li>
+            <a href=" {{ url_for('notifications.view_notifications') }}"
+              >Notifications</a
+            >
+          </li>
+          <li>
+            <a href="{{ url_for('main.reports') }}">Reports</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="auth-buttons">
+        {% if session.get('username') %}
+        <a href="#" class="btn-signin disabled"
+          >Welcome, {{ session['username'] }}</a
+        >
+        <a href="{{ url_for('auth.logout') }}" class="btn-signup">Logout</a>
+        {% else %}
+        <a href="{{ url_for('auth.signin') }}" class="btn-signin">Sign In</a>
+        <a href="{{ url_for('auth.signup') }}" class="btn-signup">Sign Up</a>
+        {% endif %}
+        <a href="{{ url_for('feedback.submit_feedback') }}" class="btn-signin"
+          >Feedback</a
+        >
+      </div>
+    </header>
+
+    <main>
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=True) %} {% if
+      messages %}
+      <div class="container mt-3">
+        {% for category, message in messages %}
+        <div
+          class="alert alert-{{ category }} alert-dismissible fade show"
+          role="alert"
+        >
+          {{ message }}
+          <button
+            type="button"
+            class="close"
+            data-dismiss="alert"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+      <section class="hero-section">
+        <div class="hero-container">
+          <div class="hero-content">
+            <h1>Protecting Our Planet's Future</h1>
+            <p class="subtitle">
+              Real-time climate monitoring and analysis for a sustainable
+              tomorrow
+            </p>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-value">
+                  <span id="current-temp">--°C</span>
+                </div>
+                <div class="stat-label">Current Temperature</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">
+                  <span id="current-humidity">--%</span>
+                </div>
+                <div class="stat-label">Humidity</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">
+                  <span id="weather-condition">----</span>
+                </div>
+                <div class="stat-label">Condition</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value"><span id="wind-speed">--m/s</span></div>
+                <div class="stat-label">Wind Speed</div>
+              </div>
+            </div>
+
+            <div class="hero-buttons">
+              <a href="{{ url_for('main.visualization') }}" class="cta-button"
+                >Explore Climate Data</a
+              >
+              <a
+                href="{{ url_for('notifications.view_notifications') }}"
+                class="cta-button secondary"
+                >Watch Overview <i class="fas fa-play"></i
+              ></a>
+            </div>
+          </div>
+          <div id="earth-container"></div>
+        </div>
+
+        <a href="#mission" class="scroll-down">
+          <span>Scroll Down</span>
+          <i class="fas fa-chevron-down"></i>
+        </a>
+      </section>
+
+      <!-- Mission Section -->
+      <section id="mission" class="mission-section">
+        <div class="section-container">
+          <div class="mission-content">
+            <h2>Our Mission</h2>
+            <p class="section-description">
+              The Earth Climate Agency is dedicated to monitoring, analyzing,
+              and preserving our planet's climate systems through cutting-edge
+              technology and global collaboration.
+            </p>
+
+            <div class="mission-cards">
+              <div class="mission-card cd">
+                <div class="card-icon">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Data Analysis</h3>
+                <p>
+                  Comprehensive processing and visualization of climate datasets
+                  for actionable insights
+                </p>
+                <br />
+                <div class="mt-5">
+                  <a
+                    href="{{ url_for('main.visualization') }}"
+                    class="cta-button outline"
+                    >View Analytics <i class="fas fa-chevron-right"></i
+                  ></a>
+                </div>
+              </div>
+              <div class="mission-card cc">
+                <div class="card-icon">
+                  <i class="fas fa-robot"></i>
+                </div>
+                <h3>Machine Learning Models</h3>
+                <p>
+                  Predictive analytics for climate forecasting using advanced AI
+                  algorithms and neural networks
+                </p>
+                <br />
+                <div class="mt-5">
+                  <a
+                    href="{{ url_for('main.predict') }}"
+                    class="cta-button outline"
+                    >Explore Models <i class="fas fa-achevron-right"></i
+                  ></a>
+                </div>
+              </div>
+              <div class="mission-card ce">
+                <div class="card-icon">
+                  <i class="fas fa-bell"></i>
+                </div>
+                <h3>Real-Time Alerts</h3>
+                <p>
+                  Instant notifications for extreme weather events and climate
+                  emergencies
+                </p>
+                <br />
+                <div class="mt-5">
+                  <a
+                    href="{{ url_for('notifications.view_notifications') }}"
+                    class="cta-button outline"
+                    >Set Up Alerts <i class="fas fa-chevron-right"></i
+                  ></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Data Visualization Section -->
+      <!-- Data Visualization Section -->
+      <section class="data-section">
+        <div class="section-container">
+          <div class="section-header">
+            <h2>Climate Data Insights</h2>
+            <p class="section-description">
+              Interactive visualizations of critical climate indicators tracked
+              by our global monitoring network
+            </p>
+          </div>
+
+          <div class="data-visualizations">
+            <div class="data-card temperature">
+              <div class="data-content">
+                <h3>Global Temperature</h3>
+                <div class="data-graph">
+                  <canvas id="tempChart"></canvas>
+                </div>
+                <div class="data-stats">
+                  <div class="stat">
+                    <span class="value" id="temp-change">Loading...</span>
+                    <span class="label">Since 1880</span>
+                  </div>
+                  <div class="stat">
+                    <span class="value" id="temp-rate">Loading...</span>
+                    <span class="label">Per decade</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="data-card co2">
+              <div class="data-content">
+                <h3>CO₂ Concentration</h3>
+                <div class="data-graph">
+                  <canvas id="co2Chart"></canvas>
+                </div>
+                <div class="data-stats">
+                  <div class="stat">
+                    <span class="value" id="current-co2">Loading...</span>
+                    <span class="label">Current Level</span>
+                  </div>
+                  <div class="stat">
+                    <span class="value" id="co2-rate">Loading...</span>
+                    <span class="label">Increase Rate</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-footer">
+            <a
+              href="{{ url_for('main.visualization') }}"
+              class="cta-button outline"
+            >
+              View All Data Sets <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Initiatives Section
+      <section class="initiatives-section">
+        <div class="section-container">
+          <div class="section-header">
+            <h2>Global Initiatives</h2>
+            <p class="section-description">
+              Our current projects making measurable impacts on climate
+              preservation
+            </p>
+          </div>
+
+          <div class="initiatives-grid">
+            <div class="initiative-card">
+              <div
+                class="card-image"
+                style="background-image: url('images/arctic.jpg')"
+              ></div>
+              <div class="card-content">
+                <span class="card-category">Polar Research</span>
+                <h3>Arctic Ice Preservation</h3>
+                <p>
+                  Developing technologies to slow the melting of polar ice caps
+                  and protect vulnerable ecosystems
+                </p>
+                <a href="#" class="card-link"
+                  >Learn More <i class="fas fa-chevron-right"></i
+                ></a>
+              </div>
+            </div>
+
+            <div class="initiative-card">
+              <div
+                class="card-image"
+                style="background-image: url('images/forest.jpg')"
+              ></div>
+              <div class="card-content">
+                <span class="card-category">Reforestation</span>
+                <h3>Global Canopy Project</h3>
+                <p>
+                  Planting 1 billion trees annually to restore forest cover and
+                  carbon sequestration
+                </p>
+                <a href="#" class="card-link"
+                  >Learn More <i class="fas fa-chevron-right"></i
+                ></a>
+              </div>
+            </div>
+
+            <div class="initiative-card">
+              <div
+                class="card-image"
+                style="background-image: url('images/ocean.jpg')"
+              ></div>
+              <div class="card-content">
+                <span class="card-category">Oceanography</span>
+                <h3>Ocean Cleanup Initiative</h3>
+                <p>
+                  Removing plastic waste and restoring marine ecosystems across
+                  all oceans
+                </p>
+                <a href="#" class="card-link"
+                  >Learn More <i class="fas fa-chevron-right"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section> -->
+
+      <!-- Newsletter Section -->
+      <section class="newsletter-section">
+        <div class="section-container">
+          <div class="newsletter-content">
+            <h2>Stay Informed</h2>
+            <p>
+              Subscribe to our monthly climate report and stay updated on our
+              latest findings and initiatives
+            </p>
+
+            <form class="newsletter-form">
+              <div class="form-group">
+                <input
+                  type="email"
+                  placeholder="Enter your email address"
+                  required
+                />
+                <button type="submit" class="cta-button">
+                  Subscribe <i class="fas fa-paper-plane"></i>
+                </button>
+              </div>
+              <div class="form-note">
+                <i class="fas fa-lock"></i> We respect your privacy. Unsubscribe
+                at any time.
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>About ECA</h3>
+            <p>
+              Monitoring Earth's climate systems since 1985 to provide accurate
+              data and drive meaningful action.
+            </p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="{{ url_for('main.index') }}">Home</a></li>
+              <li><a href="{{ url_for('auth.signup') }}">Register</a></li>
+              <li>
+                <a href="{{ url_for('feedback.submit_feedback') }}">Feedback</a>
+              </li>
+              <li><a href="{{ url_for('auth.signin') }}">Signin</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Contact</h3>
+            <p>info@climateagency.org<br />+92 321-45632456</p>
+            <div class="social-icons">
+              <a href="#"
+                ><img
+                  src="{{ url_for('static', filename='images/twitter.png')}}"
+                  alt="Twitter"
+              /></a>
+              <a href="#"
+                ><img
+                  src="{{ url_for('static', filename='images/facebook.jpg')}}"
+                  alt="Facebook"
+              /></a>
+              <a href="#"
+                ><img
+                  src="{{ url_for('static', filename='images/linkedin.jpg')}}"
+                  alt="LinkedIn"
+              /></a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2023 Earth Climate Agency. All rights reserved.</p>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Add Chart.js for data visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/earth.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/main.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/glitter.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/charts.js')}}"></script>
+    <script>
+      const apiKey = "acc49f75c81fdf103fdf717e168be8b1"; // Your key
+      const defaultCity = "Karachi";
+
+      async function fetchWeather(city) {
+        try {
+          const response = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`
+          );
+          return await response.json();
+        } catch (error) {
+          console.error("Weather fetch error:", error);
+          return null;
+        }
+      }
+
+      function updateWeatherUI(data) {
+        if (!data) {
+          console.log("No weather data available");
+          return;
+        }
+
+        document.getElementById("current-temp").textContent = `${Math.round(
+          data.main.temp
+        )}°C`;
+        document.getElementById(
+          "current-humidity"
+        ).textContent = `${data.main.humidity}%`;
+        document.getElementById("weather-condition").textContent =
+          data.weather[0].main;
+        document.getElementById(
+          "wind-speed"
+        ).textContent = `${data.wind.speed} m/s`;
+        document.getElementById(
+          "weather-location"
+        ).textContent = `${data.name}, ${data.sys.country}`;
+      }
+
+      // Simple fixed city version
+      fetchWeather(defaultCity).then(updateWeatherUI);
+    </script>
+  </body>
+</html>

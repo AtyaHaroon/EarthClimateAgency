@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Earth Climate Agency | Reports</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Orbitron:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <span>Earth Climate Agency</span>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('main.index') }}">Home</a></li>
+
+          <li><a href="{{ url_for('main.visualization') }}">Analytics</a></li>
+          <li><a href="{{ url_for('main.predict') }}">Predictions</a></li>
+
+          <li>
+            <a href="{{ url_for('notifications.view_notifications') }}"
+              >Notifications</a
+            >
+          </li>
+          <li>
+            <a href="{{ url_for('main.reports') }}" class="active">Reports</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="auth-buttons">
+        {% if session.get('username') %}
+        <a href="#" class="btn-signin disabled"
+          >Welcome, {{ session['username'] }}</a
+        >
+        <a href="{{ url_for('auth.logout') }}" class="btn-signup">Logout</a>
+        {% else %}
+        <a href="{{ url_for('auth.signin') }}" class="btn-signin">Sign In</a>
+        <a href="{{ url_for('auth.signup') }}" class="btn-signup">Sign Up</a>
+        {% endif %}
+        <a href="{{ url_for('feedback.submit_feedback') }}" class="btn-signin"
+          >Feedback</a
+        >
+      </div>
+    </header>
+
+    <main>
+      <section class="hero-sectiondata">
+        <div>
+          <div class="hero-contentdata">
+            <h1>Downloaded Reports</h1>
+            <p class="subtitle">
+              Access all your previously generated climate reports
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="data-explorer">
+        <div class="section-containers">
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Report Name</th>
+                  <th>Type</th>
+                  <th>Size</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if reports %} {% for report in reports %}
+                <tr>
+                  <td>{{ report.name }}</td>
+                  <td>{{ report.type }}</td>
+                  <td>{{ report.size }}</td>
+                  <td>{{ report.date }}</td>
+                  <td>
+                    <a
+                      href="{{ report.path }}"
+                      target="_blank"
+                      class="report-btn view"
+                    >
+                      <i class="fas fa-eye"></i> View
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %} {% else %}
+                <tr>
+                  <td colspan="5" style="text-align: center">
+                    No reports found. Generate some reports first.
+                  </td>
+                </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>About ECA</h3>
+            <p>
+              Monitoring Earth's climate systems since 1985 to provide accurate
+              data and drive meaningful action.
+            </p>
+          </div>
+          <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="{{ url_for('main.index') }}">Home</a></li>
+              <li><a href="{{ url_for('auth.signup') }}">Register</a></li>
+              <li>
+                <a href="{{ url_for('feedback.submit_feedback') }}">Feedback</a>
+              </li>
+              <li><a href="{{ url_for('auth.signin') }}">Signin</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Contact</h3>
+            <p>info@climateagency.org<br />+92 321-45632456</p>
+            <div class="social-icons">
+              <a href="#"
+                ><img
+                  src="{{ url_for('static', filename='images/twitter.png')}}"
+                  alt="Twitter"
+              /></a>
+              <a href="#"
+                ><img
+                  src="{{ url_for('static', filename='images/facebook.jpg')}}"
+                  alt="Facebook"
+              /></a>
+              <a href="#"
+                ><img
+                  src="{{ url_for('static', filename='images/linkedin.jpg')}}"
+                  alt="LinkedIn"
+              /></a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2023 Earth Climate Agency. All rights reserved.</p>
+        </div>
+      </footer>
+    </main>
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/earth.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/main.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/glitter.js')}}"></script>
+    <script src="js/charts.js"></script>
+  </body>
+</html>

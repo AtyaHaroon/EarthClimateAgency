@@ -1,6 +1,6 @@
 import os
 import pickle
-from flask import Blueprint, render_template, request, redirect, send_file, session, url_for, flash,Response  
+from flask import Blueprint, abort, render_template, request, redirect, send_file, session, url_for, flash,Response , send_from_directory 
 import matplotlib.pyplot as plt
 import io
 import pandas as pd
@@ -369,3 +369,15 @@ def reports():
     report_files.sort(key=lambda x: x['date'], reverse=True)
     
     return render_template('reports.html', reports=report_files)
+
+@main.route('/view_report/<filename>')
+def view_report(filename):
+    if 'username' not in session:
+        flash('Please log in to access this page.', 'warning')
+        return redirect(url_for('auth.signin'))
+    
+    # Validate filename to prevent directory traversal
+    if not os.path.exists(os.path.join('static', 'reports', filename)):
+        abort(404)
+        
+    return send_from_directory(os.path.join('static', 'reports'), filename)

@@ -67,28 +67,18 @@
     </header>
 
     <main>
-      <!-- Flash Messages -->
-      {% with messages = get_flashed_messages(with_categories=True) %} {% if
-      messages %}
-      <div class="container mt-3">
-        {% for category, message in messages %}
-        <div
-          class="alert alert-{{ category }} alert-dismissible fade show"
-          role="alert"
-        >
-          {{ message }}
-          <button
-            type="button"
-            class="close"
-            data-dismiss="alert"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        {% endfor %}
-      </div>
-      {% endif %} {% endwith %}
+         <!-- Flash Messages -->
+         {% with messages = get_flashed_messages(with_categories=True) %} {% if
+          messages %}
+          <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">
+              {{ message }}
+              <button class="flash-close">&times;</button>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %} {% endwith %}
       <section class="hero-sectiondata">
         <!-- <div id="earth-container"></div> -->
         <div>
@@ -246,6 +236,8 @@
           </div>
         </div>
       </section>
+    </br>
+
       <!-- Newsletter Section -->
       <section class="newsletter-section">
         <div class="section-container">
@@ -288,7 +280,7 @@
             <h3>Quick Links</h3>
             <ul>
               <li><a href="{{ url_for('main.index') }}">Home</a></li>
-              <li><a href="{{ url_for('auth.signup') }}">Register</a></li>
+              <li><a href="{{ url_for('auth.signup') }}">Signup</a></li>
               <li>
                 <a href="{{ url_for('feedback.submit_feedback') }}">Feedback</a>
               </li>
@@ -532,6 +524,63 @@
         link.click();
         document.body.removeChild(link);
       }
+      function openReport(format) {
+        const country = "{{ selected_country }}";
+        const city = "{{ selected_city }}";
+        const prediction = "{{ prediction }}";
+    
+        if (!country || !city || !prediction) {
+            alert("Please select a location and get a prediction first.");
+            return;
+        }
+    
+        // Extract current temperature from prediction
+        const tempMatch = prediction.match(/Current temperature for .*?: ([\d.]+)/);
+        if (!tempMatch) {
+            alert("Could not parse prediction data.");
+            return;
+        }
+        const currentTemp = parseFloat(tempMatch[1]);
+    
+        // Create data for the report
+        const data = {
+            location: `${city}, ${country}`,
+            currentTemperature: currentTemp,
+            prediction: prediction.includes("increase") 
+                ? "Temperature expected to increase" 
+                : "Temperature expected to remain stable",
+            forecast: [
+                { year: "Current", temperature: currentTemp, anomaly: prediction.includes("increase") ? "High" : prediction.includes("stable") ? "Normal" : "Low" },
+                { year: "2024", temperature: (currentTemp + 0.5).toFixed(2), anomaly: "+0.5°C" },
+                { year: "2025", temperature: (currentTemp + 0.8).toFixed(2), anomaly: "+0.8°C" }
+            ]
+        };
+    
+        // Generate a timestamp for the filename
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+        const filename = `climate_report_${city}_${country}_${timestamp}.${format}`;
+    
+        // Create the report and open it
+        fetch(`/generate_report/${format}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({filename, data})
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to generate report');
+            return response.json();
+        })
+        .then(data => {
+            // Open the report in a new tab
+            window.open(`/static/reports/${filename}`, '_blank');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to generate report: ' + error.message);
+        });
+    }
     </script>
   </body>
 </html>

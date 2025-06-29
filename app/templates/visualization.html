@@ -64,21 +64,11 @@
       <!-- Flash Messages -->
       {% with messages = get_flashed_messages(with_categories=True) %} {% if
       messages %}
-      <div class="container mt-3">
+      <div class="flash-messages">
         {% for category, message in messages %}
-        <div
-          class="alert alert-{{ category }} alert-dismissible fade show"
-          role="alert"
-        >
+        <div class="flash-message flash-{{ category }}">
           {{ message }}
-          <button
-            type="button"
-            class="close"
-            data-dismiss="alert"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <button class="flash-close">&times;</button>
         </div>
         {% endfor %}
       </div>
@@ -116,7 +106,7 @@
                   <option value="">--Select a Variable to Visualize --</option>
                   <option value="temperature">Temperature</option>
                   <option value="humidity">Humidity</option>
-                  <option value="co2">CO2 Levels</option>
+                  <option value="co2_levels">CO2 Levels</option>
                 </select>
                 <center>
                   <button class="cta-button">
@@ -144,12 +134,15 @@
           </div>
 
           <!-- Multi-Variable Comparison -->
-          <!-- Multi-Variable Comparison -->
           <div class="visualization-card">
             <h2>
               <i class="fas fa-layer-group"></i> Compare Multiple Variables
             </h2>
-            <form id="multiVarForm" method="POST">
+            <form
+              id="multiVarForm"
+              method="POST"
+              action="{{ url_for('main.multi_variable_comparison') }}"
+            >
               <p>Select Up to Three Variables</p>
               <div class="multi-select">
                 <div class="checkbox-group">
@@ -189,16 +182,6 @@
           </div>
         </div>
       </section>
-
-      <!-- Visualization Canvas -->
-      <section class="visualization-output">
-        <div class="section-container">
-          <div class="graph-container">
-            <canvas id="climateChart"></canvas>
-          </div>
-        </div>
-      </section>
-
       <section class="newsletter-section">
         <div class="section-container">
           <div class="newsletter-content">
@@ -286,139 +269,6 @@
         $('[data-toggle="tooltip"]').tooltip();
         $("form").on("submit", function () {
           $("#loading-spinner").show();
-        });
-      });
-    </script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Initialize chart variable
-        let multiVarChart = null;
-        const ctx = document.getElementById("climateChart").getContext("2d");
-
-        // Handle multi-variable comparison form submission
-        const multiVarForm = document.getElementById("multiVarForm");
-
-        multiVarForm.addEventListener("submit", async function (e) {
-          e.preventDefault();
-
-          const formData = new FormData(this);
-          const graphContainer = document.querySelector(".graph-container");
-
-          // Show loading state
-          graphContainer.innerHTML = `
-                <div class="loading">
-                    <i class="fas fa-spinner fa-spin"></i> Generating comparison chart...
-                </div>
-            `;
-
-          try {
-            const response = await fetch(
-              "{{ url_for('main.multi_variable_comparison') }}",
-              {
-                method: "POST",
-                body: formData,
-                headers: {
-                  Accept: "application/json",
-                },
-              }
-            );
-
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            if (data.error) {
-              throw new Error(data.error);
-            }
-
-            // Create or update canvas
-            let canvas = document.getElementById("climateChart");
-            if (!canvas) {
-              canvas = document.createElement("canvas");
-              canvas.id = "climateChart";
-              graphContainer.innerHTML = "";
-              graphContainer.appendChild(canvas);
-              ctx = canvas.getContext("2d");
-            }
-
-            // Destroy previous chart if exists
-            if (multiVarChart) {
-              multiVarChart.destroy();
-            }
-
-            // Create new chart
-            multiVarChart = new Chart(ctx, {
-              type: "line",
-              data: {
-                labels: data.labels,
-                datasets: data.datasets,
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                  x: {
-                    title: {
-                      display: true,
-                      text: "Date",
-                      color: "#fff",
-                    },
-                    ticks: {
-                      color: "#fff",
-                      maxRotation: 45,
-                      minRotation: 45,
-                    },
-                    grid: {
-                      color: "rgba(255, 255, 255, 0.1)",
-                    },
-                  },
-                  y: {
-                    title: {
-                      display: true,
-                      text: "Value",
-                      color: "#fff",
-                    },
-                    ticks: {
-                      color: "#fff",
-                    },
-                    grid: {
-                      color: "rgba(255, 255, 255, 0.1)",
-                    },
-                  },
-                },
-                plugins: {
-                  legend: {
-                    position: "top",
-                    labels: {
-                      color: "#fff",
-                      font: {
-                        size: 14,
-                      },
-                    },
-                  },
-                  tooltip: {
-                    mode: "index",
-                    intersect: false,
-                  },
-                },
-                interaction: {
-                  mode: "nearest",
-                  axis: "x",
-                  intersect: false,
-                },
-              },
-            });
-          } catch (error) {
-            console.error("Error:", error);
-            graphContainer.innerHTML = `
-                    <div class="error">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        ${error.message || "Failed to load comparison data"}
-                    </div>
-                `;
-          }
         });
       });
     </script>

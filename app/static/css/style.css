@@ -1040,7 +1040,6 @@ footer {
   background-color: var(--secondary);
   color: var(--white);
   text-align: center;
-  margin-top: 4%;
 }
 
 .newsletter-content h2 {
@@ -1897,6 +1896,38 @@ html {
 .checkbox-group input {
   width: auto;
 }
+/* Update the select element styles to match your theme */
+.data-select,
+.feedback-form select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 180, 216, 0.5);
+  background: rgba(4, 44, 77, 0.815);
+  color: var(--white);
+  font-family: var(--font-main);
+  transition: all 0.3s;
+  appearance: none; /* Removes default system styling */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%232991ac' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 12px;
+}
+
+/* Style for dropdown options */
+.data-select option,
+.feedback-form select option {
+  background: var(--darker);
+  color: var(--white);
+}
+
+/* Focus state */
+.data-select:focus,
+.feedback-form select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.3);
+}
 
 .visualization-output {
   padding: 6rem 0;
@@ -2016,4 +2047,208 @@ html {
 .report-btn:hover {
   opacity: 0.8;
   transform: translateY(-2px);
+}
+/* Global Weather Section */
+.global-weather-section {
+  background: linear-gradient(to bottom, var(--dark), var(--darker));
+  padding: 5rem 0;
+  position: relative;
+}
+
+.weather-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+  margin-top: 2rem;
+}
+
+.weather-card {
+  background: rgba(0, 180, 216, 0.1);
+  border: 1px solid rgba(0, 180, 216, 0.3);
+  border-radius: 0.8rem;
+  padding: 1.5rem;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.weather-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background: rgba(0, 180, 216, 0.2);
+}
+
+.weather-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
+
+.weather-location {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--white);
+}
+
+.weather-temp {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+.weather-condition {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+}
+
+.weather-card.loading {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+}
+.weather-time {
+  font-size: 0.9rem;
+  color: #9c9797;
+  margin: 5px 0;
+  font-weight: 600;
+}
+
+@media (min-width: 400px) and (max-width: 767px) {
+  .weather-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Tablet view (shows 6 cards - 3 columns) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .weather-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Small desktop (shows 8 cards - 4 columns) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .weather-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Large desktop (shows 8 cards - 4 columns) */
+@media (min-width: 1200px) {
+  .weather-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Weather card adjustments for mobile */
+@media (max-width: 767px) {
+  .weather-card {
+    padding: 1rem;
+    min-height: 160px;
+  }
+
+  .weather-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .weather-location {
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .weather-time {
+    font-size: 0.8rem;
+    margin: 0.2rem 0;
+  }
+
+  .weather-temp {
+    font-size: 1.5rem;
+    margin: 0.3rem 0;
+  }
+
+  .weather-condition {
+    font-size: 0.8rem;
+  }
+}
+/* Flash Messages */
+.flash-messages {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  max-width: 400px;
+  width: 90%;
+}
+
+.flash-message {
+  position: relative;
+  padding: 15px 20px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transform: translateX(100%);
+  animation: slideIn 0.5s forwards;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.flash-success {
+  background-color: #28a745;
+  border-left: 5px solid #218838;
+}
+
+.flash-error {
+  background-color: #dc3545;
+  border-left: 5px solid #c82333;
+}
+
+.flash-warning {
+  background-color: #ffc107;
+  border-left: 5px solid #e0a800;
+  color: #212529;
+}
+
+.flash-info {
+  background-color: #17a2b8;
+  border-left: 5px solid #138496;
+}
+
+.flash-close {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 15px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.flash-close:hover {
+  opacity: 1;
+}
+@keyframes slideOut {
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+    height: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+  }
 }

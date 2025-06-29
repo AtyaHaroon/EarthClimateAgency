@@ -22,6 +22,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+  
   </head>
   <body>
     <header>
@@ -61,32 +62,20 @@
     </header>
 
     <main>
-      <!-- Flash Messages -->
-      {% with messages = get_flashed_messages(with_categories=True) %} {% if
-      messages %}
-      <div class="container mt-3">
-        {% for category, message in messages %}
-        <div
-          class="alert alert-{{ category }} alert-dismissible fade show"
-          role="alert"
-        >
-          {{ message }}
-          <button
-            type="button"
-            class="close"
-            data-dismiss="alert"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        {% endfor %}
-      </div>
-      {% endif %} {% endwith %}
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=True) %} {% if
+          messages %}
+          <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">
+              {{ message }}
+              <button class="flash-close">&times;</button>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %} {% endwith %}
       <div class="auth-container">
-        <div class="auth-background">
-          <div class="auth-overlay"></div>
-        </div>
+        <div class="auth-background"></div>
 
         <div class="auth-form-container">
           <div class="auth-header">
@@ -149,7 +138,7 @@
             <h3>Quick Links</h3>
             <ul>
               <li><a href="{{ url_for('main.index') }}">Home</a></li>
-              <li><a href="{{ url_for('auth.signup') }}">Register</a></li>
+              <li><a href="{{ url_for('auth.signup') }}">Signup</a></li>
               <li>
                 <a href="{{ url_for('feedback.submit_feedback') }}">Feedback</a>
               </li>

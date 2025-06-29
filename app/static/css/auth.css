@@ -20,10 +20,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  /* background: url("../images/auth-bg.jpg") no-repeat center center; */
-  /* background-size: cover; */
   z-index: 1;
-  /* animation: panBackground 30s infinite linear; */
 }
 
 @keyframes panBackground {
@@ -38,36 +35,34 @@
   }
 }
 
-/* .auth-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    135deg,
-    rgba(3, 4, 94, 0.95) 0%,
-    rgba(2, 62, 138, 0.9) 100%
-  );
-} */
-
-/* Form Container Padding Adjustments */
+/* Updated .auth-form-container to match feedback form */
 .auth-form-container {
   position: relative;
   z-index: 2;
-  background: rgba(0, 180, 216, 0.1);
-  border: 1px solid rgba(0, 180, 216, 0.3);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 1.5rem;
-  padding: 2rem 2rem; /* Adjusted padding */
+  background: rgba(0, 0, 0, 0.116); /* Semi-transparent dark background */
+  border: 1px solid rgba(0, 180, 216, 0.3); /* Light blue border */
+  backdrop-filter: blur(12px); /* Strong blur effect */
+  -webkit-backdrop-filter: blur(12px); /* Safari support */
+  border-radius: 1rem; /* Rounded corners */
+  padding: 2rem;
   width: 100%;
   max-width: 38rem;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-  /* border: 1px solid rgba(255, 255, 255, 0.15); */
-  margin: 1rem auto; /* Added margin for breathing room */
-  box-sizing: border-box;
-  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  margin: 1rem auto;
+  transition: all 0.3s ease;
+}
+
+/* Optional: Adjust form inputs to match feedback form styling */
+.auth-form input {
+  background: rgba(0, 0, 0, 0.3); /* Darker input background */
+  border: 1px solid rgba(0, 180, 216, 0.5); /* Matching border */
+  color: var(--white);
+  transition: all 0.3s;
+}
+
+.auth-form input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.3); /* Glow effect */
 }
 
 @keyframes fadeInUp {
@@ -154,7 +149,7 @@ input {
   padding: 1rem 1.2rem;
   border-radius: 0.8rem;
   border: 1px solid rgba(255, 255, 255, 0.25);
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: rgba(4, 44, 77, 0.815);
   color: var(--white);
   font-family: var(--font-main);
   font-size: 1rem;
@@ -190,7 +185,14 @@ input:focus {
   margin-top: 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
+/* Focus states for both input and select */
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background-color: rgba(4, 44, 77, 0.9); /* Slightly darker when focused */
+  box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.25);
+  transform: translateY(-2px);
+}
 .auth-button:hover {
   background-color: var(--primary-dark);
   transform: translateY(-3px);
@@ -254,7 +256,6 @@ input:focus {
   width: 1.7rem;
   height: 1.7rem;
   border-radius: 10rem;
-
 }
 
 /* Footer Improvements */

@@ -8,7 +8,23 @@ window.addEventListener("load", function () {
     });
   }, 1000);
 });
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".flash-close").forEach((button) => {
+    button.addEventListener("click", function () {
+      const flashMessage = this.closest(".flash-message");
+      flashMessage.style.animation = "slideOut 0.5s forwards";
+      setTimeout(() => flashMessage.remove(), 500);
+    });
+  });
 
+  // Auto-dismiss flash messages after 5 seconds
+  setTimeout(() => {
+    document.querySelectorAll(".flash-message").forEach((message) => {
+      message.style.animation = "slideOut 0.5s forwards";
+      setTimeout(() => message.remove(), 500);
+    });
+  }, 5000);
+});
 // Main JavaScript for interactive elements
 document.addEventListener("DOMContentLoaded", function () {
   const mobileMenuToggle = document.createElement("div");

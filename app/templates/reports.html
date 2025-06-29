@@ -89,8 +89,7 @@
                   <td>{{ report.date }}</td>
                   <td>
                     <a
-                      href="{{ report.path }}"
-                      target="_blank"
+                      href="{{ url_for('main.view_report', filename=report.name) }}"
                       class="report-btn view"
                     >
                       <i class="fas fa-eye"></i> View
@@ -123,7 +122,7 @@
             <h3>Quick Links</h3>
             <ul>
               <li><a href="{{ url_for('main.index') }}">Home</a></li>
-              <li><a href="{{ url_for('auth.signup') }}">Register</a></li>
+              <li><a href="{{ url_for('auth.signup') }}">Signup</a></li>
               <li>
                 <a href="{{ url_for('feedback.submit_feedback') }}">Feedback</a>
               </li>
@@ -166,5 +165,23 @@
     <script src="{{ url_for('static', filename='js/main.js')}}"></script>
     <script src="{{ url_for('static', filename='js/glitter.js')}}"></script>
     <script src="js/charts.js"></script>
+    <script>
+      document.querySelectorAll(".view-report").forEach((link) => {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+          // Open in new tab first (some browsers will open directly)
+          window.open(this.href, "_blank");
+          // Then trigger download (as fallback)
+          setTimeout(() => {
+            const a = document.createElement("a");
+            a.href = this.href;
+            a.download = this.getAttribute("data-filename");
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }, 1000);
+        });
+      });
+    </script>
   </body>
 </html>

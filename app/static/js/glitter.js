@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Add enhanced deep space glitter to dark sections with more particles
   document
     .querySelectorAll(
-      ".mission-section, .data-section , data-hero,data-explorer, data-sources ,auth-container ,.hero-sectiondata "
+      ".mission-section, .data-section , data-hero,data-explorer, data-sources , auth-container ,.hero-sectiondata "
     )
     .forEach((section) => {
       const sectionGlitter = document.createElement("div");

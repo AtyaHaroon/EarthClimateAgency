@@ -60,21 +60,11 @@
       <!-- Flash Messages -->
       {% with messages = get_flashed_messages(with_categories=True) %} {% if
       messages %}
-      <div class="container mt-3">
+      <div class="flash-messages">
         {% for category, message in messages %}
-        <div
-          class="alert alert-{{ category }} alert-dismissible fade show"
-          role="alert"
-        >
+        <div class="flash-message flash-{{ category }}">
           {{ message }}
-          <button
-            type="button"
-            class="close"
-            data-dismiss="alert"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <button class="flash-close">&times;</button>
         </div>
         {% endfor %}
       </div>
@@ -203,137 +193,29 @@
         </div>
       </section>
 
-      <!-- Data Visualization Section -->
-      <!-- Data Visualization Section -->
-      <section class="data-section">
+      <!-- Global Weather Section -->
+      <section class="global-weather-section">
         <div class="section-container">
           <div class="section-header">
-            <h2>Climate Data Insights</h2>
+            <h2>Global Weather Overview</h2>
             <p class="section-description">
-              Interactive visualizations of critical climate indicators tracked
-              by our global monitoring network
+              Current weather conditions in major cities around the world
             </p>
           </div>
 
-          <div class="data-visualizations">
-            <div class="data-card temperature">
-              <div class="data-content">
-                <h3>Global Temperature</h3>
-                <div class="data-graph">
-                  <canvas id="tempChart"></canvas>
-                </div>
-                <div class="data-stats">
-                  <div class="stat">
-                    <span class="value" id="temp-change">Loading...</span>
-                    <span class="label">Since 1880</span>
-                  </div>
-                  <div class="stat">
-                    <span class="value" id="temp-rate">Loading...</span>
-                    <span class="label">Per decade</span>
-                  </div>
-                </div>
+          <div class="weather-grid" id="global-weather-grid">
+            <!-- Weather cards will be dynamically inserted here by JavaScript -->
+            <div class="weather-card loading">
+              <div class="weather-icon">
+                <i class="fas fa-spinner fa-spin"></i>
               </div>
+              <div class="weather-location">Loading...</div>
+              <div class="weather-temp">--°C</div>
+              <div class="weather-condition">--</div>
             </div>
-
-            <div class="data-card co2">
-              <div class="data-content">
-                <h3>CO₂ Concentration</h3>
-                <div class="data-graph">
-                  <canvas id="co2Chart"></canvas>
-                </div>
-                <div class="data-stats">
-                  <div class="stat">
-                    <span class="value" id="current-co2">Loading...</span>
-                    <span class="label">Current Level</span>
-                  </div>
-                  <div class="stat">
-                    <span class="value" id="co2-rate">Loading...</span>
-                    <span class="label">Increase Rate</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="section-footer">
-            <a
-              href="{{ url_for('main.visualization') }}"
-              class="cta-button outline"
-            >
-              View All Data Sets <i class="fas fa-arrow-right"></i>
-            </a>
           </div>
         </div>
       </section>
-
-      <!-- Initiatives Section
-      <section class="initiatives-section">
-        <div class="section-container">
-          <div class="section-header">
-            <h2>Global Initiatives</h2>
-            <p class="section-description">
-              Our current projects making measurable impacts on climate
-              preservation
-            </p>
-          </div>
-
-          <div class="initiatives-grid">
-            <div class="initiative-card">
-              <div
-                class="card-image"
-                style="background-image: url('images/arctic.jpg')"
-              ></div>
-              <div class="card-content">
-                <span class="card-category">Polar Research</span>
-                <h3>Arctic Ice Preservation</h3>
-                <p>
-                  Developing technologies to slow the melting of polar ice caps
-                  and protect vulnerable ecosystems
-                </p>
-                <a href="#" class="card-link"
-                  >Learn More <i class="fas fa-chevron-right"></i
-                ></a>
-              </div>
-            </div>
-
-            <div class="initiative-card">
-              <div
-                class="card-image"
-                style="background-image: url('images/forest.jpg')"
-              ></div>
-              <div class="card-content">
-                <span class="card-category">Reforestation</span>
-                <h3>Global Canopy Project</h3>
-                <p>
-                  Planting 1 billion trees annually to restore forest cover and
-                  carbon sequestration
-                </p>
-                <a href="#" class="card-link"
-                  >Learn More <i class="fas fa-chevron-right"></i
-                ></a>
-              </div>
-            </div>
-
-            <div class="initiative-card">
-              <div
-                class="card-image"
-                style="background-image: url('images/ocean.jpg')"
-              ></div>
-              <div class="card-content">
-                <span class="card-category">Oceanography</span>
-                <h3>Ocean Cleanup Initiative</h3>
-                <p>
-                  Removing plastic waste and restoring marine ecosystems across
-                  all oceans
-                </p>
-                <a href="#" class="card-link"
-                  >Learn More <i class="fas fa-chevron-right"></i
-                ></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section> -->
 
       <!-- Newsletter Section -->
       <section class="newsletter-section">
@@ -378,7 +260,7 @@
             <h3>Quick Links</h3>
             <ul>
               <li><a href="{{ url_for('main.index') }}">Home</a></li>
-              <li><a href="{{ url_for('auth.signup') }}">Register</a></li>
+              <li><a href="{{ url_for('auth.signup') }}">Signup</a></li>
               <li>
                 <a href="{{ url_for('feedback.submit_feedback') }}">Feedback</a>
               </li>
@@ -418,7 +300,6 @@
     <script src="{{ url_for('static', filename='js/earth.js')}}"></script>
     <script src="{{ url_for('static', filename='js/main.js')}}"></script>
     <script src="{{ url_for('static', filename='js/glitter.js')}}"></script>
-    <script src="{{ url_for('static', filename='js/charts.js')}}"></script>
     <script>
       const apiKey = "acc49f75c81fdf103fdf717e168be8b1"; // Your key
       const defaultCity = "Karachi";
@@ -459,6 +340,135 @@
 
       // Simple fixed city version
       fetchWeather(defaultCity).then(updateWeatherUI);
+
+      // Global weather data for major cities
+      const globalCities = [
+        // Pakistan cities
+        { name: "Karachi", country: "PK", timezone: "Asia/Karachi" },
+        { name: "Lahore", country: "PK", timezone: "Asia/Karachi" },
+        { name: "Islamabad", country: "PK", timezone: "Asia/Karachi" },
+        { name: "Peshawar", country: "PK", timezone: "Asia/Karachi" },
+        { name: "Quetta", country: "PK", timezone: "Asia/Karachi" },
+
+        // Other international cities
+        { name: "New York", country: "US", timezone: "America/New_York" },
+        { name: "London", country: "GB", timezone: "Europe/London" },
+        { name: "Tokyo", country: "JP", timezone: "Asia/Tokyo" },
+        { name: "Sydney", country: "AU", timezone: "Australia/Sydney" },
+        { name: "Dubai", country: "AE", timezone: "Asia/Dubai" },
+        { name: "Paris", country: "FR", timezone: "Europe/Paris" },
+        { name: "Beijing", country: "CN", timezone: "Asia/Shanghai" },
+        { name: "Moscow", country: "RU", timezone: "Europe/Moscow" },
+        { name: "Cape Town", country: "ZA", timezone: "Africa/Johannesburg" },
+        { name: "Toronto", country: "CA", timezone: "America/Toronto" },
+        { name: "Mexico City", country: "MX", timezone: "America/Mexico_City" },
+        { name: "Bangkok", country: "TH", timezone: "Asia/Bangkok" },
+        { name: "Singapore", country: "SG", timezone: "Asia/Singapore" },
+      ];
+
+      // Weather icon mapping
+      const weatherIcons = {
+        "01d": "fa-sun", // clear sky (day)
+        "01n": "fa-moon", // clear sky (night)
+        "02d": "fa-cloud-sun", // few clouds (day)
+        "02n": "fa-cloud-moon", // few clouds (night)
+        "03d": "fa-cloud", // scattered clouds
+        "03n": "fa-cloud",
+        "04d": "fa-cloud", // broken clouds
+        "04n": "fa-cloud",
+        "09d": "fa-cloud-rain", // shower rain
+        "09n": "fa-cloud-rain",
+        "10d": "fa-cloud-sun-rain", // rain (day)
+        "10n": "fa-cloud-moon-rain", // rain (night)
+        "11d": "fa-bolt", // thunderstorm
+        "11n": "fa-bolt",
+        "13d": "fa-snowflake", // snow
+        "13n": "fa-snowflake",
+        "50d": "fa-smog", // mist
+        "50n": "fa-smog",
+      };
+
+      // Function to get current time in a specific timezone
+      function getCurrentTime(timezone) {
+        try {
+          const options = {
+            timeZone: timezone,
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          };
+          return new Date().toLocaleTimeString("en-US", options);
+        } catch (e) {
+          console.error("Error getting time for", timezone, e);
+          return "--:--";
+        }
+      }
+
+      // Function to get random cities
+      function getRandomCities(count) {
+        const shuffled = [...globalCities].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
+      }
+
+      async function fetchGlobalWeather() {
+        const weatherGrid = document.getElementById("global-weather-grid");
+        weatherGrid.innerHTML = ""; // Clear loading message
+
+        try {
+          // Detect mobile devices
+          const isMobile = window.matchMedia("(max-width: 767px)").matches;
+          const cityCount = isMobile ? 4 : 8; // Show 4 on mobile, 8 on desktop
+
+          const randomCities = getRandomCities(cityCount);
+          const weatherPromises = randomCities.map((city) =>
+            fetchWeather(`${city.name},${city.country}`)
+          );
+
+          const weatherData = await Promise.all(weatherPromises);
+
+          weatherData.forEach((data, index) => {
+            if (!data) return;
+
+            const city = randomCities[index];
+            const currentTime = getCurrentTime(city.timezone);
+
+            const weatherCard = document.createElement("div");
+            weatherCard.className = "weather-card";
+
+            const weatherIconCode = data.weather[0].icon;
+            const weatherIconClass =
+              weatherIcons[weatherIconCode] || "fa-cloud";
+
+            weatherCard.innerHTML = `
+             <div class="weather-icon"><i class="fas ${weatherIconClass}"></i></div>
+             <div class="weather-location">${data.name}, ${
+              data.sys.country
+            }</div>
+             <div class="weather-time">${currentTime}</div>
+             <div class="weather-temp">${Math.round(data.main.temp)}°C</div>
+             <div class="weather-condition">${data.weather[0].main}</div>
+           `;
+
+            weatherGrid.appendChild(weatherCard);
+          });
+        } catch (error) {
+          console.error("Error fetching global weather:", error);
+          weatherGrid.innerHTML = `
+           <div class="weather-card error">
+             <div class="weather-icon"><i class="fas fa-exclamation-triangle"></i></div>
+             <div class="weather-location">Weather Data Unavailable</div>
+             <div class="weather-condition">Please try again later</div>
+           </div>
+         `;
+        }
+      }
+
+      // Call the function when the page loads
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchGlobalWeather();
+        // Update every 5 minutes (300000 milliseconds)
+        setInterval(fetchGlobalWeather, 300000);
+      });
     </script>
   </body>
 </html>

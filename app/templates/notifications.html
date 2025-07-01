@@ -68,18 +68,18 @@
     </header>
 
     <main class="pt-5">
-          <!-- Flash Messages -->
-          {% with messages = get_flashed_messages(with_categories=True) %} {% if
-            messages %}
-            <div class="flash-messages">
-              {% for category, message in messages %}
-              <div class="flash-message flash-{{ category }}">
-                {{ message }}
-                <button class="flash-close">&times;</button>
-              </div>
-              {% endfor %}
-            </div>
-            {% endif %} {% endwith %}
+         <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=True) %} {% if
+      messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">
+          {{ message }}
+          <button class="flash-close">&times;</button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
       <section class="hero-sectiondata">
         <div>
           <div class="hero-contentdata">

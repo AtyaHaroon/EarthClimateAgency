@@ -18,190 +18,165 @@
     />
   </head>
   <body>
-    <header>
-      <div class="logo">
-        <span>Earth Climate Agency</span>
-      </div>
-      <nav>
-        <ul>
-          <li><a href="{{ url_for('main.index') }}">Home</a></li>
-          <li><a href="{{ url_for('main.visualization') }}">Analytics</a></li>
-          <li><a href="{{ url_for('main.predict') }}">Predictions</a></li>
-          <li>
-            <a href=" {{ url_for('notifications.view_notifications') }}"
-              >Notifications</a
-            >
-          </li>
-          <li>
-            <a href="{{ url_for('main.reports') }}">Reports</a>
-          </li>
-        </ul>
-      </nav>
-      <div class="auth-buttons">
-        {% if session.get('username') %}
-        <a href="#" class="btn-signin disabled"
-          >Welcome, {{ session['username'] }}</a
-        >
+  <header>
+    <div class="logo">
+      <span>Earth Climate Agency</span>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="{{ url_for('main.index') }}">Home</a></li>
+        <li><a href="{{ url_for('main.visualization') }}">Analytics</a></li>
+        <li><a href="{{ url_for('main.predict') }}">Predictions</a></li>
+        <li><a href="{{ url_for('notifications.view_notifications') }}">Notifications</a></li>
+        <li><a href="{{ url_for('main.reports') }}">Reports</a></li>
+      </ul>
+    </nav>
+    <div class="auth-buttons">
+      {% if session.get('username') %}
+        <a href="#" class="btn-signin disabled">Welcome, {{ session['username'] }}</a>
         <a href="{{ url_for('auth.logout') }}" class="btn-signup">Logout</a>
-        {% else %}
+      {% else %}
         <a href="{{ url_for('auth.signin') }}" class="btn-signin">Sign In</a>
         <a href="{{ url_for('auth.signup') }}" class="btn-signup">Sign Up</a>
-        {% endif %}
-        <a href="{{ url_for('feedback.submit_feedback') }}" class="btn-signin"
-          >Feedback</a
+      {% endif %}
+      <a href="{{ url_for('feedback.submit_feedback') }}" class="btn-signin">Feedback</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">
+              {{ message }}
+              <button class="flash-close">&times;</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <section class="hero-sectiondata">
+      <div class="hero-contentdata">
+        <h1>Share Your Feedback</h1>
+        <p class="subtitle">
+          Help us improve our services and better serve the global climate community.
+        </p>
+      </div>
+    </section>
+
+    <section class="data-explorer">
+      <div class="section-container">
+        <form
+          action="{{ url_for('feedback.submit_feedback') }}"
+          method="POST"
+          id="feedback-form"
+          class="feedback-form"
         >
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="message">Your Feedback</label>
+            <textarea
+              id="message"
+              name="message"
+              rows="6"
+              placeholder="Tell us what's on your mind..."
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group rating-group">
+            <label>How would you rate your experience?</label>
+            <div class="stars">
+              <input type="radio" id="star5" name="rating" value="5" />
+              <label for="star5"><i class="fas fa-star"></i></label>
+              <input type="radio" id="star4" name="rating" value="4" />
+              <label for="star4"><i class="fas fa-star"></i></label>
+              <input type="radio" id="star3" name="rating" value="3" />
+              <label for="star3"><i class="fas fa-star"></i></label>
+              <input type="radio" id="star2" name="rating" value="2" />
+              <label for="star2"><i class="fas fa-star"></i></label>
+              <input type="radio" id="star1" name="rating" value="1" />
+              <label for="star1"><i class="fas fa-star"></i></label>
+            </div>
+          </div>
+
+          <div class="form-group consent-group">
+            <input type="checkbox" id="consent" name="consent" required />
+            <label for="consent">
+              I agree to the processing of my data for the purpose of improving ECA services.
+            </label>
+          </div>
+
+          <center>
+            <button type="submit" class="cta-button">
+              Submit Feedback <i class="fas fa-paper-plane"></i>
+            </button>
+          </center>
+        </form>
       </div>
-    </header>
+    </section>
 
-    <main>
-      <!-- Flash Messages -->
-      {% with messages = get_flashed_messages(with_categories=True) %} {% if
-      messages %}
-      <div class="flash-messages">
-        {% for category, message in messages %}
-        <div class="flash-message flash-{{ category }}">
-          {{ message }}
-          <button class="flash-close">&times;</button>
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About ECA</h3>
+          <p>
+            Monitoring Earth's climate systems since 1985 to provide accurate data and drive meaningful action.
+          </p>
         </div>
-        {% endfor %}
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="{{ url_for('main.index') }}">Home</a></li>
+            <li><a href="{{ url_for('auth.signup') }}">Signup</a></li>
+            <li><a href="{{ url_for('feedback.submit_feedback') }}">Feedback</a></li>
+            <li><a href="{{ url_for('auth.signin') }}">Signin</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact</h3>
+          <p>info@climateagency.org<br />+92 321-45632456</p>
+          <div class="social-icons">
+            <a href="#"><img src="{{ url_for('static', filename='images/twitter.png') }}" alt="Twitter" /></a>
+            <a href="#"><img src="{{ url_for('static', filename='images/facebook.jpg') }}" alt="Facebook" /></a>
+            <a href="#"><img src="{{ url_for('static', filename='images/linkedin.jpg') }}" alt="LinkedIn" /></a>
+          </div>
+        </div>
       </div>
-      {% endif %} {% endwith %}
-      <section class="hero-sectiondata">
-        <div>
-          <div class="hero-contentdata">
-            <h1>Share Your Feedback</h1>
-            <p class="subtitle">
-              Help us improve our services and better serve the global climate
-              community.
-            </p>
-          </div>
-        </div>
-      </section>
+      <div class="footer-bottom">
+        <p>&copy; 2023 Earth Climate Agency. All rights reserved.</p>
+      </div>
+    </footer>
+  </main>
 
-      <section class="data-explorer">
-        <div class="section-container">
-          <form
-            action="{{ url_for('feedback.submit_feedback') }}"
-            method="POST"
-            id="feedback-form"
-            class="feedback-form"
-          >
-            <div class="form-group">
-              <label for="email">Email Address</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="Enter your email"
-                required
-              />
-            </div>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+  <script src="{{ url_for('static', filename='js/earth.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/glitter.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
 
-            <div class="form-group">
-              <label for="message">Your Feedback</label>
-              <textarea
-                id="message"
-                name="message"
-                rows="6"
-                placeholder="Tell us what's on your mind..."
-                required
-              ></textarea>
-            </div>
+  <script>
+    // Optional: close flash messages
+    document.querySelectorAll(".flash-close").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        btn.parentElement.style.display = "none";
+      });
+    });
+  </script>
+</body>
 
-            <div class="form-group rating-group">
-              <label>How would you rate your experience?</label>
-              <div class="stars">
-                <input type="radio" id="star5" name="rating" value="5" />
-                <label for="star5"><i class="fas fa-star"></i></label>
-                <input type="radio" id="star4" name="rating" value="4" />
-                <label for="star4"><i class="fas fa-star"></i></label>
-                <input type="radio" id="star3" name="rating" value="3" />
-                <label for="star3"><i class="fas fa-star"></i></label>
-                <input type="radio" id="star2" name="rating" value="2" />
-                <label for="star2"><i class="fas fa-star"></i></label>
-                <input type="radio" id="star1" name="rating" value="1" />
-                <label for="star1"><i class="fas fa-star"></i></label>
-              </div>
-            </div>
-
-            <div class="form-group consent-group">
-              <input type="checkbox" id="consent" name="consent" required />
-              <label for="consent"
-                >I agree to the processing of my data for the purpose of
-                improving ECA services.</label
-              >
-            </div>
-            <center>
-              <button type="submit" class="cta-button">
-                Submit Feedback <i class="fas fa-paper-plane"></i>
-              </button>
-            </center>
-          </form>
-        </div>
-      </section>
-
-      <footer>
-        <div class="footer-content">
-          <div class="footer-section">
-            <h3>About ECA</h3>
-            <p>
-              Monitoring Earth's climate systems since 1985 to provide accurate
-              data and drive meaningful action.
-            </p>
-          </div>
-          <div class="footer-section">
-            <h3>Quick Links</h3>
-            <ul>
-              <li><a href="{{ url_for('main.index') }}">Home</a></li>
-              <li><a href="{{ url_for('auth.signup') }}">Signup</a></li>
-              <li>
-                <a href="{{ url_for('feedback.submit_feedback') }}">Feedback</a>
-              </li>
-              <li><a href="{{ url_for('auth.signin') }}">Signin</a></li>
-            </ul>
-          </div>
-          <div class="footer-section">
-            <h3>Contact</h3>
-            <p>info@climateagency.org<br />+92 321-45632456</p>
-            <div class="social-icons">
-              <a href="#"
-                ><img
-                  src="{{ url_for('static', filename='images/twitter.png')}}"
-                  alt="Twitter"
-              /></a>
-              <a href="#"
-                ><img
-                  src="{{ url_for('static', filename='images/facebook.jpg')}}"
-                  alt="Facebook"
-              /></a>
-              <a href="#"
-                ><img
-                  src="{{ url_for('static', filename='images/linkedin.jpg')}}"
-                  alt="LinkedIn"
-              /></a>
-            </div>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          <p>&copy; 2023 Earth Climate Agency. All rights reserved.</p>
-        </div>
-      </footer>
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
-    <script src="{{ url_for('static', filename='js/earth.js')}}"></script>
-    <script src="{{ url_for('static', filename='js/main.js')}}"></script>
-    <script src="{{ url_for('static', filename='js/glitter.js')}}"></script>
-    <script src="js/charts.js"></script>
-    <script>
-      document
-        .getElementById("feedback-form")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          // In a real implementation, you would send the form data to a server here
-          window.location.href = "thank_you.html";
-        });
-    </script>
-  </body>
 </html>

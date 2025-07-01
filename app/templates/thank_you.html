@@ -28,79 +28,64 @@
           <li><a href="{{ url_for('main.visualization') }}">Analytics</a></li>
           <li><a href="{{ url_for('main.predict') }}">Predictions</a></li>
           <li>
-            <a href=" {{ url_for('notifications.view_notifications') }}"
-              >Notifications</a
-            >
+            <a href="{{ url_for('notifications.view_notifications') }}">Notifications</a>
           </li>
-          <li>
-            <a href="{{ url_for('main.reports') }}">Reports</a>
-          </li>
+          <li><a href="{{ url_for('main.reports') }}">Reports</a></li>
         </ul>
       </nav>
       <div class="auth-buttons">
         {% if session.get('username') %}
-        <a href="#" class="btn-signin disabled"
-          >Welcome, {{ session['username'] }}</a
-        >
+        <a href="#" class="btn-signin disabled">Welcome, {{ session['username'] }}</a>
         <a href="{{ url_for('auth.logout') }}" class="btn-signup">Logout</a>
         {% else %}
-        <a href="" class="btn-signin">Sign In</a>
+        <a href="{{ url_for('auth.signin') }}" class="btn-signin">Sign In</a>
         <a href="{{ url_for('auth.signup') }}" class="btn-signup">Sign Up</a>
         {% endif %}
-        <a href="{{ url_for('feedback.submit_feedback') }}" class="btn-signin"
-          >Feedback</a
-        >
+        <a href="{{ url_for('feedback.submit_feedback') }}" class="btn-signin">Feedback</a>
       </div>
     </header>
 
     <main>
-      <!-- Flash Messages -->
-      {% with messages = get_flashed_messages(with_categories=True) %} {% if
-      messages %}
-      <div class="flash-messages">
-        {% for category, message in messages %}
-        <div class="flash-message flash-{{ category }}">
-          {{ message }}
-          <button class="flash-close">&times;</button>
-        </div>
-        {% endfor %}
-      </div>
-      {% endif %} {% endwith %}
-      <br /><br /><br />
-
+      {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+          <div class="flash-messages">
+            {% for category, message in messages %}
+              <div class="flash-message flash-{{ category }}">
+                {{ message }}
+                <button class="flash-close">&times;</button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+</br></br></br></br>
       <section class="hero-sectiondata">
-        <!-- Back Button -->
-        <a href="{{ url_for('main.index') }}" class="back-button">
-          &larr; Back to Home
-        </a>
+      
         <div>
           <div class="hero-contentdata">
             <h1>Thank You!</h1>
             <p class="subtitle">
-              We appreciate your feedback and will use it to improve our
-              services.
+              We appreciate your feedback and will use it to improve our services.
             </p>
             <div class="confirmation-message">
               <i class="fas fa-check-circle"></i>
               <p>
-                Your feedback has been successfully submitted. A member of our
-                team will review your message and respond if necessary.
+                Your feedback has been successfully submitted. A member of our team
+                will review your message and respond if necessary.
               </p>
-              <a href="{{ url_for('main.index') }}" class="cta-button"
-                >Return to Home</a
-              >
+              <a href="{{ url_for('main.index') }}" class="cta-button">Return to Home</a>
             </div>
           </div>
         </div>
       </section>
-      <br /><br />
+</br></br></br></br>
       <footer>
         <div class="footer-content">
           <div class="footer-section">
             <h3>About ECA</h3>
             <p>
-              Monitoring Earth's climate systems since 1985 to provide accurate
-              data and drive meaningful action.
+              Monitoring Earth's climate systems since 1985 to provide accurate data
+              and drive meaningful action.
             </p>
           </div>
           <div class="footer-section">
@@ -108,9 +93,7 @@
             <ul>
               <li><a href="{{ url_for('main.index') }}">Home</a></li>
               <li><a href="{{ url_for('auth.signup') }}">Signup</a></li>
-              <li>
-                <a href="{{ url_for('feedback.submit_feedback') }}">Feedback</a>
-              </li>
+              <li><a href="{{ url_for('feedback.submit_feedback') }}">Feedback</a></li>
               <li><a href="{{ url_for('auth.signin') }}">Signin</a></li>
             </ul>
           </div>
@@ -118,21 +101,9 @@
             <h3>Contact</h3>
             <p>info@climateagency.org<br />+92 321-45632456</p>
             <div class="social-icons">
-              <a href="#"
-                ><img
-                  src="{{ url_for('static', filename='images/twitter.png')}}"
-                  alt="Twitter"
-              /></a>
-              <a href="#"
-                ><img
-                  src="{{ url_for('static', filename='images/facebook.jpg')}}"
-                  alt="Facebook"
-              /></a>
-              <a href="#"
-                ><img
-                  src="{{ url_for('static', filename='images/linkedin.jpg')}}"
-                  alt="LinkedIn"
-              /></a>
+              <a href="#"><img src="{{ url_for('static', filename='images/twitter.png')}}" alt="Twitter" /></a>
+              <a href="#"><img src="{{ url_for('static', filename='images/facebook.jpg')}}" alt="Facebook" /></a>
+              <a href="#"><img src="{{ url_for('static', filename='images/linkedin.jpg')}}" alt="LinkedIn" /></a>
             </div>
           </div>
         </div>
@@ -147,6 +118,6 @@
     <script src="{{ url_for('static', filename='js/earth.js')}}"></script>
     <script src="{{ url_for('static', filename='js/main.js')}}"></script>
     <script src="{{ url_for('static', filename='js/glitter.js')}}"></script>
-    <script src="js/charts.js"></script>
+    <script src="{{ url_for('static', filename='js/charts.js')}}"></script>
   </body>
 </html>

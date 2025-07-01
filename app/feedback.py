@@ -10,16 +10,7 @@ def submit_feedback():
     if request.method == 'POST':
         email = request.form.get('email')
         user_feedback = request.form.get('feedback')
-
-        # Validate email and feedback input
-        if not email or not user_feedback:
-            flash('Both email and feedback are required!', 'danger')
-            return redirect(url_for('feedback.submit_feedback'))
         
-        if not is_valid_email(email):
-            flash('Invalid email address!', 'danger')
-            return redirect(url_for('feedback.submit_feedback'))
-
         try:
             # Save feedback to MongoDB
             mongo.db.feedback.insert_one({'email': email, 'feedback': user_feedback})
@@ -40,16 +31,11 @@ def submit_feedback():
 
     return render_template('feedback.html')
 
-# Helper function to validate email format
-def is_valid_email(email):
-    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    return re.match(email_regex, email)
-
 # Function to send feedback to admin's email
 def send_feedback_to_admin(user_email, user_feedback):
     try:
         # Create the email message
-        msg = Message("New Feedback Submission", recipients=["atyaharoon98@gmail.com"])
+        msg = Message("New Feedback Submission", recipients=["aseefahmed@aptechnorth.edu.pk"])
         msg.body = f"New feedback submitted:\n\nEmail: {user_email}\nFeedback: {user_feedback}"
 
         # Send the email

@@ -115,7 +115,7 @@ def multi_variable_comparison():
 def predict():
     if 'username' not in session:
         flash('Please log in to access this page.', 'warning')
-        return redirect(url_for('auth.login'))  # Redirect to login page
+        return redirect(url_for('auth.signin'))  # Redirect to login page
 
     countries = {
        'USA': ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'],
